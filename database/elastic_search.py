@@ -15,13 +15,19 @@ class QueryDatabase:
         self.es.index(index="queries", document=doc)
 
     def search_similar_queries(self, query: str, top_n: int = 5):
-        """Retrieve similar queries using full-text search"""
+        """Retrieve similar queries using full-text search, prioritizing recent ones."""
         body = {
             "query": {
                 "match": {
-                    "query": query
+                    "query": {
+                        "query": query,
+                        "fuzziness": "AUTO"  # Allow for flexible matches
+                    }
                 }
-            }
+            },
+            "sort": [
+                {"timestamp": {"order": "desc"}}  # Sort by most recent queries
+            ]
         }
         response = self.es.search(index="queries", body=body, size=top_n)
         return [hit["_source"]["query"] for hit in response["hits"]["hits"]]
