@@ -49,7 +49,7 @@ class QueryExpander:
             return {"expanded_queries": filtered_queries[:num_return_seq]}
 
         except Exception as e:
-            print(f"❌ Error expanding query: {e}")
+            print(f"Error expanding query: {e}")
             return {"error": str(e)}
 
     async def re_rank_results(self, query, search_results, user_id=None, db: AsyncSession = None):
