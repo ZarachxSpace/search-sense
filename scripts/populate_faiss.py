@@ -24,7 +24,7 @@ if not queries:
     exit()
 
 # Step 3: Embed queries
-print("🔄 Encoding queries...")
+print("Encoding queries...")
 embeddings = model.encode(queries, show_progress_bar=True)
 
 # Step 4: Build FAISS index
