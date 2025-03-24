@@ -29,7 +29,7 @@ def fetch_google_results(query, num_results=5):
     SEARCH_ENGINE_ID = os.getenv("SEARCH_ENGINE_ID")
 
     if not GOOGLE_API_KEY or not SEARCH_ENGINE_ID:
-        print("❌ Missing Google API credentials in environment variables.")
+        print("Missing Google API credentials in environment variables.")
         return []
 
     search_url = (
@@ -46,7 +46,7 @@ def fetch_google_results(query, num_results=5):
                 for item in data["items"][:num_results]
             ]
     except Exception as e:
-        print(f"❌ Google API Error: {e}")
+        print(f"Google API Error: {e}")
     return []
 
 def fetch_duckduckgo_results(query, num_results=5):
@@ -61,5 +61,5 @@ def fetch_duckduckgo_results(query, num_results=5):
                 for item in data["RelatedTopics"][:num_results]
             ]
     except Exception as e:
-        print(f"❌ DuckDuckGo API Error: {e}")
+        print(f"DuckDuckGo API Error: {e}")
     return []

@@ -17,19 +17,19 @@ class QueryUpdater:
         all_queries = set(google_queries + duckduckgo_queries)
 
         for suggestion in all_queries:
-            self.db.store_query(suggestion, db.sync_session)  # 👈 use sync access via .sync_session if needed
+            self.db.store_query(suggestion, db.sync_session)  
 
         return list(all_queries)
 
 
-# Dev test only
-if __name__ == "__main__":
-    from database.postgres import SessionLocal
+# # Dev test only
+# if __name__ == "__main__":
+#     from database.postgres import SessionLocal
 
-    async def test():
-        async with SessionLocal() as db:
-            updater = QueryUpdater()
-            new_queries = await updater.update_query_database("quantum computing", db=db)
-            print("Fetched and stored:", new_queries)
+#     async def test():
+#         async with SessionLocal() as db:
+#             updater = QueryUpdater()
+#             new_queries = await updater.update_query_database("quantum computing", db=db)
+#             print("Fetched and stored:", new_queries)
 
-    asyncio.run(test())
+#     asyncio.run(test())

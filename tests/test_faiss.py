@@ -14,6 +14,6 @@ embedding = model.encode([query])
 
 D, I = index.search(np.array(embedding), 5)
 
-print("🔍 Similar queries:")
+print("Similar queries:")
 for idx in I[0]:
     print("•", id_to_text[idx])

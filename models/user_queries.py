@@ -11,7 +11,7 @@ async def store_user_query(db: AsyncSession, user_id: int, query: str):
         await db.commit()
         return new_query
     except Exception as e:
-        await db.rollback()  # Rollback if an error occurs
+        await db.rollback()  # Rollback 
         print(f"Error storing user query: {e}")
         return None
 

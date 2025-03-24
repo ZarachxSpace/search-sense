@@ -2,9 +2,9 @@ import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sqlalchemy.ext.asyncio import AsyncSession
-from database.postgres import get_db  # PostgreSQL Integration
-from models.user_queries import get_all_queries  # Fetch stored queries
-from database.elastic_search import QueryDatabase  # Import but don't instantiate here
+from database.postgres import get_db  
+from models.user_queries import get_all_queries  
+from database.elastic_search import QueryDatabase  
 
 class FAISSIndex:
     def __init__(self, model_name="all-MiniLM-L6-v2"):
@@ -24,7 +24,7 @@ class FAISSIndex:
 
     async def load_queries(self, db: AsyncSession):
         """Load queries from PostgreSQL and Elasticsearch into FAISS."""
-        elastic = QueryDatabase()  # Lazy instantiation here
+        elastic = QueryDatabase()  # Lazy instantiation 
         stored_queries = elastic.search_all_queries()  # From Elasticsearch
         pg_queries = await get_all_queries(db)         # From PostgreSQL
 

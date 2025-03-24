@@ -22,13 +22,13 @@ class QueryDatabase:
             try:
                 self.es = Elasticsearch(self.ELASTICSEARCH_HOST)
                 if self.es.ping():
-                    print(f"✅ Connected to Elasticsearch at {self.ELASTICSEARCH_HOST}")
+                    print(f"Connected to Elasticsearch at {self.ELASTICSEARCH_HOST}")
                     return
             except ConnectionError:
-                print(f"🔄 Elasticsearch not available. Retrying ({attempt + 1}/{max_retries})...")
+                print(f"Elasticsearch not available. Retrying ({attempt + 1}/{max_retries})...")
                 time.sleep(retry_delay)
 
-        raise ConnectionError(f"❌ Failed to connect to Elasticsearch at {self.ELASTICSEARCH_HOST}")
+        raise ConnectionError(f"Failed to connect to Elasticsearch at {self.ELASTICSEARCH_HOST}")
 
     def store_query(self, query: str, db: Session):
         """Store a new query in Elasticsearch and PostgreSQL"""
@@ -41,7 +41,7 @@ class QueryDatabase:
         try:
             self.es.index(index="queries", document=doc)
         except Exception as e:
-            print(f"❌ Error storing query in Elasticsearch: {e}")
+            print(f"Error storing query in Elasticsearch: {e}")
 
         # Store in PostgreSQL
         try:
@@ -49,7 +49,7 @@ class QueryDatabase:
             db.commit()
         except Exception as e:
             db.rollback()
-            print(f"❌ Error storing query in PostgreSQL: {e}")
+            print(f"Error storing query in PostgreSQL: {e}")
 
     def search_similar_queries(self, query: str, top_n: int = 5):
         """Retrieve similar queries using full-text search from Elasticsearch."""
@@ -67,10 +67,10 @@ class QueryDatabase:
             }
             response = self.es.search(index="queries", body=body, size=top_n)
             queries = [hit["_source"]["query"] for hit in response["hits"]["hits"]]
-            print(f"✅ Retrieved queries for '{query}': {queries}")  # Debugging
+            print(f"Retrieved queries for '{query}': {queries}")  # Debugging
             return queries
         except Exception as e:
-            print(f"❌ Elasticsearch Error: {e}")
+            print(f"Elasticsearch Error: {e}")
             return []
 
     def search_all_queries(self):
@@ -80,7 +80,7 @@ class QueryDatabase:
             response = self.es.search(index="queries", body=body, size=1000)
             return [hit["_source"]["query"] for hit in response["hits"]["hits"]]
         except Exception as e:
-            print(f"❌ Elasticsearch Error: {e}")
+            print(f"Elasticsearch Error: {e}")
             return []
 
     def search_documents(self, query: str, top_n: int = 10):
@@ -103,7 +103,7 @@ class QueryDatabase:
                 for hit in response["hits"]["hits"]
             ]
         except Exception as e:
-            print(f"❌ Elasticsearch Error: {e}")
+            print(f"Elasticsearch Error: {e}")
             return []
 
     def get_user_preferences(self, user_id: str, db: Session):
@@ -112,7 +112,7 @@ class QueryDatabase:
             preferences = db.query(UserPreferences).filter(UserPreferences.user_id == user_id).first()
             return preferences.preferred_keywords if preferences else []
         except Exception as e:
-            print(f"❌ PostgreSQL Error: {e}")
+            print(f"PostgreSQL Error: {e}")
             return []
 
     def create_documents_index(self):
@@ -129,6 +129,6 @@ class QueryDatabase:
                     }
                 }
                 self.es.indices.create(index="documents", body=body)
-                print("✅ Created 'documents' index")
+                print("Created 'documents' index")
         except Exception as e:
-            print(f"❌ Error creating 'documents' index: {e}")
+            print(f"Error creating 'documents' index: {e}")
