@@ -4,6 +4,7 @@ import os
 import time
 from sqlalchemy.orm import Session
 from database.models import UserPreferences
+from sqlalchemy import text
 
 class QueryDatabase:
     def __init__(self):
@@ -42,12 +43,14 @@ class QueryDatabase:
         except Exception as e:
             print(f"Error storing query in Elasticsearch: {e}")
 
-        try:
-            db.execute("INSERT INTO queries (query, timestamp) VALUES (:query, :timestamp)", doc)
-            db.commit()
-        except Exception as e:
-            db.rollback()
-            print(f"Error storing query in PostgreSQL: {e}")
+        # try:
+        #     db.execute(
+        #         text("INSERT INTO queries (query, timestamp) VALUES (:query, :timestamp)"), doc
+        #     )
+        #     db.commit()
+        # except Exception as e:
+        #     db.rollback()
+        #     print(f"Error storing query in PostgreSQL: {e}")
 
     def search_similar_queries(self, query: str, top_n: int = 5):
         try:
