@@ -120,6 +120,12 @@ No static data is required, making it portable and reproducible without relying 
 
 ---
 
+## To-Do List & Future Improvements
+- Frontend to interact with the API
+- AWS Lambda deployment
+
+---
+
 ## License
 
 This project is licensed under the MIT License.
