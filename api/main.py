@@ -21,7 +21,7 @@ def get_query_expander():
 async def home():
     return {"message": "Search-sense API is running!"}
 
-@app.get("/expand_query/")
+@app.get("/expand_query")
 async def expand_query(query: str, num_return_seq: int = 5, user_id: int = None, db: AsyncSession = Depends(get_db)):
     results = await get_query_expander().expand_query(query=query, user_id=user_id, num_return_seq=num_return_seq, db=db)
     return results
