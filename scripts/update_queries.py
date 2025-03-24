@@ -1,25 +1,35 @@
 from database.elastic_search import QueryDatabase
-from search_engines.fetch_queries import fetch_google_suggestions, fetch_duckduckgo_suggestions
+from search_engines.fetch_queries import fetch_google_results, fetch_duckduckgo_results
+from sqlalchemy.ext.asyncio import AsyncSession
+from database.postgres import SessionLocal
+import asyncio
 
 class QueryUpdater:
     def __init__(self):
-        """Initialize connection to ElasticSearch"""
+        """Initialize Elasticsearch and PostgreSQL connection."""
         self.db = QueryDatabase()
 
-    def update_query_database(self, query: str):
-        """Fetch new related queries and store them dynamically."""
-        google_queries = fetch_google_suggestions(query)
-        duckduckgo_queries = fetch_duckduckgo_suggestions(query)
-        all_queries = set(google_queries + duckduckgo_queries)  # Merge & remove duplicates
+    async def update_query_database(self, query: str, db: AsyncSession):
+        """Fetch new related queries and store them."""
+        google_queries = fetch_google_results(query)
+        duckduckgo_queries = fetch_duckduckgo_results(query)
+
+        all_queries = set(google_queries + duckduckgo_queries)
 
         for suggestion in all_queries:
-            self.db.store_query(suggestion)
+            self.db.store_query(suggestion, db.sync_session)  # 👈 use sync access via .sync_session if needed
 
-        return list(all_queries)  # Return new queries for debugging
-    
+        return list(all_queries)
 
+
+# Dev test only
 if __name__ == "__main__":
-    query_updater = QueryUpdater()
-    query = "best programming laptops 2024"
-    new_queries = query_updater.update_query_database(query)
-    print("New Queries Fetched & Stored:", new_queries)
+    from database.postgres import SessionLocal
+
+    async def test():
+        async with SessionLocal() as db:
+            updater = QueryUpdater()
+            new_queries = await updater.update_query_database("quantum computing", db=db)
+            print("Fetched and stored:", new_queries)
+
+    asyncio.run(test())
