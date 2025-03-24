@@ -20,7 +20,7 @@ query_db = QueryDatabase()
 queries = query_db.search_all_queries()
 
 if not queries:
-    print("❌ No queries found in ElasticSearch.")
+    print("No queries found in ElasticSearch.")
     exit()
 
 # Step 3: Embed queries
@@ -39,4 +39,4 @@ faiss.write_index(index, INDEX_PATH)
 with open(MAPPING_PATH, "wb") as f:
     pickle.dump(queries, f)
 
-print(f"✅ FAISS index built and saved with {len(queries)} entries.")
+print(f"FAISS index built and saved with {len(queries)} entries.")
