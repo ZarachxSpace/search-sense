@@ -37,13 +37,11 @@ class QueryDatabase:
             "timestamp": datetime.utcnow()
         }
 
-        # Store in Elasticsearch
         try:
             self.es.index(index="queries", document=doc)
         except Exception as e:
             print(f"Error storing query in Elasticsearch: {e}")
 
-        # Store in PostgreSQL
         try:
             db.execute("INSERT INTO queries (query, timestamp) VALUES (:query, :timestamp)", doc)
             db.commit()
@@ -52,7 +50,6 @@ class QueryDatabase:
             print(f"Error storing query in PostgreSQL: {e}")
 
     def search_similar_queries(self, query: str, top_n: int = 5):
-        """Retrieve similar queries using full-text search from Elasticsearch."""
         try:
             body = {
                 "query": {
@@ -66,15 +63,12 @@ class QueryDatabase:
                 "sort": [{"timestamp": {"order": "desc"}}]
             }
             response = self.es.search(index="queries", body=body, size=top_n)
-            queries = [hit["_source"]["query"] for hit in response["hits"]["hits"]]
-            print(f"Retrieved queries for '{query}': {queries}")  # Debugging
-            return queries
+            return [hit["_source"]["query"] for hit in response["hits"]["hits"]]
         except Exception as e:
             print(f"Elasticsearch Error: {e}")
             return []
 
     def search_all_queries(self):
-        """Retrieve all stored queries from Elasticsearch."""
         try:
             body = {"query": {"match_all": {}}}
             response = self.es.search(index="queries", body=body, size=1000)
@@ -84,7 +78,6 @@ class QueryDatabase:
             return []
 
     def search_documents(self, query: str, top_n: int = 10):
-        """Retrieve search results from Elasticsearch based on query."""
         try:
             body = {
                 "query": {
@@ -107,7 +100,6 @@ class QueryDatabase:
             return []
 
     def get_user_preferences(self, user_id: str, db: Session):
-        """Retrieve past user preferences (clicked articles, saved topics, etc.) from PostgreSQL."""
         try:
             preferences = db.query(UserPreferences).filter(UserPreferences.user_id == user_id).first()
             return preferences.preferred_keywords if preferences else []
@@ -116,7 +108,6 @@ class QueryDatabase:
             return []
 
     def create_documents_index(self):
-        """Ensure the 'documents' index exists before querying."""
         try:
             if not self.es.indices.exists(index="documents"):
                 body = {
